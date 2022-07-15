@@ -1,0 +1,23 @@
+{
+    "name": "owlympus/owly-monetico",
+    "description": "Monetico Gateway",
+    "license": "proprietary",
+    "keywords": [
+        "monetico"
+    ],
+    "autoload": {
+        "psr-4": {
+            "OwlyMonetico\\": "src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Owlympus",
+            "email": "contact@owlympus.com"
+        }
+    ],
+    "require": {
+        "php": "7.4"
+    }
+}
