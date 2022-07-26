@@ -3,136 +3,95 @@
 namespace OwlyMonetico\Model;
 
 use DateTime;
-use JsonSerializable;
+use Exception;
+use OwlyMonetico\Collection\AuthenticationMethod;
+use OwlyMonetico\Collection\PriorAuthenticationMethod;
 
-class Customer implements JsonSerializable
+class Customer
 {
-    private string $email;
+    const ACCOUNT_AGE_FORMAT = 'Y-m-d';
 
-    private string $language;
+    const PAYMENT_MEAN_AGE_FORMAT = 'Y-m-d';
 
-    private ?string $civility;
+    const AUTHENTICATION_TIMESTAMP_FORMAT = 'Y-m-d\Th:i:s\Z';
 
-    private ?string $name;
+    const LAST_PASSWORD_CHANGE_FORMAT = 'Y-m-d';
 
-    private ?string $firstName;
+    const LAST_ACCOUNT_MODIFICATION_FORMAT = 'Y-m-d';
 
-    private ?string $lastName;
+    private ?string $civility = null;
 
-    private ?string $middleName;
+    private ?string $name = null;
 
-    private ?string $address;
+    private ?string $firstName = null;
 
-    private ?string $addressLine1;
+    private ?string $lastName = null;
 
-    private ?string $addressLine2;
+    private ?string $middleName = null;
 
-    private ?string $addressLine3;
+    private ?string $address = null;
 
-    private ?string $city;
+    private ?string $addressLine1 = null;
 
-    private ?string $postalCode;
+    private ?string $addressLine2 = null;
 
-    private ?string $country;
+    private ?string $addressLine3 = null;
 
-    private ?string $stateOrProvince;
+    private ?string $city = null;
 
-    private ?string $countrySubdivision;
+    private ?string $postalCode = null;
 
-    private ?string $birthLastName;
+    private ?string $country = null;
 
-    private ?string $birthCity;
+    private ?string $stateOrProvince = null;
 
-    private ?string $birthPostalCode;
+    private ?string $countrySubdivision = null;
 
-    private ?string $birthCountry;
+    private ?string $email = null;
 
-    private ?string $birthStateOrProvince;
+    private ?string $birthLastName = null;
 
-    private ?string $birthCountrySubdivision;
+    private ?string $birthCity = null;
 
-    private ?DateTime $birthdate;
+    private ?string $birthPostalCode = null;
 
-    private ?string $phone;
+    private ?string $birthCountry = null;
 
-    private ?string $nationalIDNumber;
+    private ?string $birthStateOrProvince = null;
 
-    private ?bool $suspiciousAccountActivity;
+    private ?string $birthCountrySubdivision = null;
 
-    private ?string $authenticationMethod;
+    private ?DateTime $birthdate = null;
 
-    private ?DateTime $authenticationTimestamp;
+    private ?string $phone = null;
 
-    private ?string $priorAuthenticationMethod;
+    private ?string $nationalIDNumber = null;
 
-    private ?DateTime $priorAuthenticationTimestamp;
+    private ?bool $suspiciousAccountActivity = null;
 
-    private ?DateTime $paymentMeanAge;
+    private ?string $authenticationMethod = null;
 
-    private ?int $lastYearTransactions;
+    private ?DateTime $authenticationTimestamp = null;
 
-    private ?int $last24HoursTransactions;
+    private ?string $priorAuthenticationMethod = null;
 
-    private ?int $addCardNbLast24Hours;
+    private ?DateTime $priorAuthenticationTimestamp = null;
 
-    private ?int $last6MonthsPurchase;
+    private ?DateTime $paymentMeanAge = null;
 
-    private ?DateTime $lastPasswordChange;
+    private ?int $lastYearTransactions = null;
 
-    private ?DateTime $accountAge;
+    private ?int $last24HoursTransactions = null;
 
-    private ?DateTime $lastAccountModification;
+    private ?int $addCardNbLast24Hours = null;
 
-    public function __construct(string $email, string $language)
-    {
-        $this->email = $email;
-        $this->language = $language;
-    }
+    private ?int $last6MonthsPurchase = null;
 
-    public function jsonSerialize()
-    {
-        return array_filter([
-            'civility' => $this->getCivility(),
-            'name' => $this->getName(),
-            'firstName' => $this->getFirstName(),
-            'lastName' => $this->getLastName(),
-            'middleName' => $this->getMiddleName(),
-            'address' => $this->getAddress(),
-            'addressLine1' => $this->getAddressLine1(),
-            'addressLine2' => $this->getAddressLine2(),
-            'addressLine3' => $this->getAddressLine3(),
-            'city' => $this->getCity(),
-            'postalCode' => $this->getPostalCode(),
-            'country' => $this->getCountry(),
-            'stateOrProvince' => $this->getStateOrProvince(),
-            'countrySubdivision' => $this->getCountrySubdivision(),
-            'email' => $this->getEmail(),
-            'birthLastName' => $this->getBirthLastName(),
-            'birthCity' => $this->getBirthCity(),
-            'birthPostalCode' => $this->getBirthPostalCode(),
-            'birthCountry' => $this->getBirthCountry(),
-            'birthStateOrProvince' => $this->getBirthStateOrProvince(),
-            'birthCountrySubdivision' => $this->getBirthCountrySubdivision(),
-            'birthdate' => $this->getFormatedBirthdate(),
-            'phone' => $this->getPhone(),
-            'nationalIDNumber' => $this->getNationalIDNumber(),
-            'suspiciousAccountActivity' => $this->getSuspiciousAccountActivity(),
-            'authenticationMethod' => $this->getAuthenticationMethod(),
-            'authenticationTimestamp' => $this->getFormatedAuthenticationTimestamp(),
-            'priorAuthenticationMethod' => $this->getPriorAuthenticationMethod(),
-            'priorAuthenticationTimestamp' => $this->getFormatedPriorAuthenticationTimestamp(),
-            'paymentMeanAge' => $this->getFormatedPaymentMeanAge(),
-            'lastYearTransactions' => $this->getLastYearTransactions(),
-            'last24HoursTransactions' => $this->getLast24HoursTransactions(),
-            'addCardNbLast24Hours' => $this->getAddCardNbLast24Hours(),
-            'last6MonthsPurchase' => $this->getLast6MonthsPurchase(),
-            'lastPasswordChange' => $this->getFormatedLastPasswordChange(),
-            'accountAge' => $this->getFormatedAccountAge(),
-            'lastAccountModification' => $this->getFormatedLastAccountModification()
-        ], function ($value) {
-            return !is_null($value);
-        });
-    }
+    private ?DateTime $lastPasswordChange = null;
+
+    private ?DateTime $accountAge = null;
+
+    private ?DateTime $lastAccountModification = null;
 
     public function getCivility(): ?string
     {
@@ -278,24 +237,6 @@ class Customer implements JsonSerializable
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getLanguage(): string
-    {
-        return $this->language;
-    }
-
-    /**
-     * @param string $language
-     * @return Customer
-     */
-    public function setLanguage(string $language): Customer
-    {
-        $this->language = $language;
-        return $this;
-    }
-
     public function getStateOrProvince(): ?string
     {
         return $this->stateOrProvince;
@@ -320,9 +261,16 @@ class Customer implements JsonSerializable
         return $this;
     }
 
-    public function getEmail(): string
+    public function getEmail(): ?string
     {
         return $this->email;
+    }
+
+    public function setEmail(?string $email): Customer
+    {
+        $this->email = $email;
+
+        return $this;
     }
 
     public function getBirthLastName(): ?string
@@ -502,14 +450,6 @@ class Customer implements JsonSerializable
         return $this->priorAuthenticationTimestamp;
     }
 
-    public function getFormatedPriorAuthenticationTimestamp(): ?string
-    {
-        if ($this->getPriorAuthenticationTimestamp() instanceof DateTime)
-            return $this->getPriorAuthenticationTimestamp()->format("Y-m-d\TH:i:s\Z");
-
-        return null;
-    }
-
     public function setPriorAuthenticationTimestamp(?DateTime $priorAuthenticationTimestamp): Customer
     {
         $this->priorAuthenticationTimestamp = $priorAuthenticationTimestamp;
@@ -520,14 +460,6 @@ class Customer implements JsonSerializable
     public function getPaymentMeanAge(): ?DateTime
     {
         return $this->paymentMeanAge;
-    }
-
-    public function getFormatedPaymentMeanAge(): ?string
-    {
-        if ($this->getPaymentMeanAge() instanceof DateTime)
-            return $this->getPaymentMeanAge()->format("Y-m-d");
-
-        return null;
     }
 
     public function setPaymentMeanAge(?DateTime $paymentMeanAge): Customer
@@ -590,14 +522,6 @@ class Customer implements JsonSerializable
         return $this->lastPasswordChange;
     }
 
-    public function getFormatedLastPasswordChange(): ?string
-    {
-        if ($this->getLastPasswordChange() instanceof DateTime)
-            return $this->getLastPasswordChange()->format("Y-m-d");
-
-        return null;
-    }
-
     public function setLastPasswordChange(?DateTime $lastPasswordChange): Customer
     {
         $this->lastPasswordChange = $lastPasswordChange;
@@ -608,14 +532,6 @@ class Customer implements JsonSerializable
     public function getAccountAge(): ?DateTime
     {
         return $this->accountAge;
-    }
-
-    public function getFormatedAccountAge(): ?string
-    {
-        if ($this->getAccountAge() instanceof DateTime)
-            return $this->getAccountAge()->format("Y-m-d");
-
-        return null;
     }
 
     public function setAccountAge(?DateTime $accountAge): Customer
@@ -630,18 +546,163 @@ class Customer implements JsonSerializable
         return $this->lastAccountModification;
     }
 
-    public function getFormatedLastAccountModification(): ?string
-    {
-        if ($this->getLastAccountModification() instanceof DateTime)
-            return $this->getLastAccountModification()->format("Y-m-d");
-
-        return null;
-    }
-
     public function setLastAccountModification(?DateTime $lastAccountModification): Customer
     {
         $this->lastAccountModification = $lastAccountModification;
 
         return $this;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function validate($data)
+    {
+        if (!empty($data['civility']) && preg_match('/^[a-zA-Z]{1,32}$/', $data['civility']) === false)
+            throw new Exception('Field "Customer->civility" incorrect (' . $data['civility'] . '). Need 32 letters max with no accent.');
+        if (!empty($data['name']) && strlen($data['name']) > 45)
+            throw new Exception('Field "Customer->name" incorrect (' . $data['name'] . '). Need 45 characters max.');
+        if (!empty($data['firstName']) && strlen($data['firstName']) > 45)
+            throw new Exception('Field "Customer->firstName" incorrect (' . $data['firstName'] . '). Need 45 characters max.');
+        if (!empty($data['lastName']) && strlen($data['lastName']) > 45)
+            throw new Exception('Field "Customer->lastName" incorrect (' . $data['lastName'] . '). Need 45 characters max.');
+        if (!empty($data['lastName']) && strlen($data['middleName']) > 150)
+            throw new Exception('Field "Customer->middleName" incorrect (' . $data['middleName'] . '). Need 150 characters max.');
+        if (!empty($data['address']) && strlen($data['address']) > 250)
+            throw new Exception('Field "Customer->address" incorrect (' . $data['address'] . '). Need 250 characters max.');
+        if (!empty($data['addressLine1']) && strlen($data['addressLine1']) > 50)
+            throw new Exception('Field "Customer->addressLine1" incorrect (' . $data['addressLine1'] . '). Need 50 characters max.');
+        if (!empty($data['addressLine2']) && strlen($data['addressLine2']) > 50)
+            throw new Exception('Field "Customer->addressLine2" incorrect (' . $data['addressLine2'] . '). Need 50 characters max.');
+        if (!empty($data['addressLine3']) && strlen($data['addressLine3']) > 50)
+            throw new Exception('Field "Customer->addressLine3" incorrect (' . $data['addressLine3'] . '). Need 50 characters max.');
+        if (!empty($data['city']) && strlen($data['city']) > 50)
+            throw new Exception('Field "Customer->city" incorrect (' . $data['city'] . '). Need 50 characters max.');
+        if (!empty($data['postalCode']) && strlen($data['postalCode']) > 10)
+            throw new Exception('Field "Customer->postalCode" incorrect (' . $data['postalCode'] . '). Need 10 characters max.');
+        if (!empty($data['country']) && preg_match('/^[A-Z]{2}$/', $data['country']) === false)
+            throw new Exception('Field "Customer->country" incorrect (' . $data['country'] . '). Need 2 capitalized letters max.');
+        if (!empty($data['stateOrProvince']) && preg_match('/^' . $data['country'] . '-[A-Z]{1,3}$/', $data['stateOrProvince']) === false)
+            throw new Exception('Field "Customer->stateOrProvince" incorrect (' . $data['stateOrProvince'] . '). Need format [^' . $data['country'] . '-[A-Z]{1,3}$].');
+        if (!empty($data['countrySubdivision']) && preg_match('/^' . $data['country'] . '-[A-Z]{1,3}$/', $data['stateOrProvince']) === false)
+            throw new Exception('Field "Customer->countrySubdivision" incorrect (' . $data['countrySubdivision'] . '). Need format [^' . $data['country'] . '-[A-Z]{1,3}$].');
+        if (!empty($data['email']) && (strlen($data['email']) > 254 || filter_var($data['email'], FILTER_VALIDATE_EMAIL) === false))
+            throw new Exception('Field "Customer->email" incorrect (' . $data['email'] . '). Need 254 characters max and having email format.');
+        if(!empty($data['birthLastName']) && strlen($data['birthLastName']) > 45)
+            throw new Exception('Field "Customer->birthLastName" incorrect (' . $data['birthLastName'] . '). Need 45 characters max.');
+        if(!empty($data['birthCity']) && strlen($data['birthCity']) > 50)
+            throw new Exception('Field "Customer->birthStateOrProvince" incorrect (' . $data['birthCity'] . '). Need 50 characters max.');
+        if(!empty($data['birthPostalCode']) && strlen($data['birthPostalCode']) > 10)
+            throw new Exception('Field "Customer->birthPostalCode" incorrect (' . $data['birthPostalCode'] . '). Need 10 characters max.');
+        if(!empty($data['birthCountry']) && preg_match('/^[A-Z]{2}$/', $data['country']) === false)
+            throw new Exception('Field "Customer->birthCountry" incorrect (' . $data['birthCountry'] . '). Need 2 capitalized letters max.');
+        if(!empty($data['birthStateOrProvince']) && preg_match('/^[A-Z]{2}-[A-Z]{1,3}$/', $data['stateOrProvince']) === false)
+            throw new Exception('Field "Customer->birthStateOrProvince" incorrect (' . $data['birthStateOrProvince'] . '). Need format [^[A-Z]{2}-[A-Z]{1,3}$].');
+        if(!empty($data['birthCountrySubdivision']) && preg_match('/^[A-Z]{2}-[A-Z]{1,3}$/', $data['birthCountrySubdivision']) === false)
+            throw new Exception('Field "Customer->birthCountrySubdivision" incorrect (' . $data['birthCountrySubdivision'] . '). Need format [^[A-Z]{2}-[A-Z]{1,3}$].');
+        if (!empty($data['phone']) && (strlen($data['phone']) > 18 || preg_match('/^\+\d{1,4}-\d+$/', $data['phone']) === false))
+            throw new Exception('Field "Customer->phone" incorrect (' . $data['phone'] . '). Need 18 characters max and having format [^\+\d{1,4}-\d+$].');
+        if(!empty($data['nationalIDNumber']) && strlen($data['nationalIDNumber']) > 255)
+            throw new Exception('Field "Customer->nationalIDNumber" incorrect (' . $data['nationalIDNumber'] . '). Need 255 characters max.');
+        if(!empty($data['authenticationMethod']) && !in_array($data['authenticationMethod'], AuthenticationMethod::all()))
+            throw new Exception('Field "Customer->authenticationMethod" incorrect (' . $data['authenticationMethod'] . '). Need to be an available authentication method in this list: ['.implode(', ', AuthenticationMethod::all()).'].');
+        if(!empty($data['priorAuthenticationMethod']) && !in_array($data['priorAuthenticationMethod'], PriorAuthenticationMethod::all()))
+            throw new Exception('Field "Customer->priorAuthenticationMethod" incorrect (' . $data['priorAuthenticationMethod'] . '). Need to be an available prior authentication method in this list: ['.implode(', ', PriorAuthenticationMethod::all()).'].');
+        if(isset($data['lastYearTransactions']) && $data['lastYearTransactions'] < 0)
+            throw new Exception('Field "Customer->lastYearTransactions" incorrect (' . $data['lastYearTransactions'] . '). Need to be a positive integer or 0.');
+        if(isset($data['last24HoursTransactions']) && $data['last24HoursTransactions'] < 0)
+            throw new Exception('Field "Customer->last24HoursTransactions" incorrect (' . $data['last24HoursTransactions'] . '). Need to be a positive integer or 0.');
+        if(isset($data['addCardNbLast24Hours']) && $data['addCardNbLast24Hours'] < 0)
+            throw new Exception('Field "Customer->addCardNbLast24Hours" incorrect (' . $data['addCardNbLast24Hours'] . '). Need to be a positive integer or 0.');
+        if (isset($data['last6MonthsPurchase']) && $data['last6MonthsPurchase'] < 0)
+            throw new Exception('Field "Customer->last6MonthsPurchase" incorrect (' . $data['last6MonthsPurchase'] . '). Need to be a positive integer or 0.');
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function generateContext($skipValidation = false): array
+    {
+        $data = [];
+
+        if(!empty($this->civility))
+            $data['civility'] = $this->civility;
+        if(!empty($this->name))
+            $data['name'] = $this->name;
+        if(!empty($this->firstName))
+            $data['firstName'] = $this->firstName;
+        if(!empty($this->lastName))
+            $data['lastName'] = $this->lastName;
+        if(!empty($this->middleName))
+            $data['middleName'] = $this->middleName;
+        if(!empty($this->address))
+            $data['address'] = $this->address;
+        if(!empty($this->addressLine1))
+            $data['addressLine1'] = $this->addressLine1;
+        if(!empty($this->addressLine2))
+            $data['addressLine2'] = $this->addressLine2;
+        if(!empty($this->addressLine3))
+            $data['addressLine3'] = $this->addressLine3;
+        if(!empty($this->city))
+            $data['city'] = $this->city;
+        if(!empty($this->postalCode))
+            $data['postalCode'] = $this->postalCode;
+        if(!empty($this->country))
+            $data['country'] = $this->country;
+        if(!empty($this->stateOrProvince))
+            $data['stateOrProvince'] = $this->stateOrProvince;
+        if(!empty($this->countrySubdivision))
+            $data['countrySubdivision'] = $this->countrySubdivision;
+        if(!empty($this->email))
+            $data['email'] = $this->email;
+        if(!empty($this->birthLastName))
+            $data['birthLastName'] = $this->birthLastName;
+        if(!empty($this->birthCity))
+            $data['birthCity'] = $this->birthCity;
+        if(!empty($this->birthPostalCode))
+            $data['birthPostalCode'] = $this->birthPostalCode;
+        if(!empty($this->birthCountry))
+            $data['birthCountry'] = $this->birthCountry;
+        if(!empty($this->birthStateOrProvince))
+            $data['birthStateOrProvince'] = $this->birthStateOrProvince;
+        if(!empty($this->birthCountrySubdivision))
+            $data['birthCountrySubdivision'] = $this->birthCountrySubdivision;
+        if(!empty($this->birthdate))
+            $data['birthdate'] = $this->birthdate;
+        if(!empty($this->phone))
+            $data['phone'] = $this->phone;
+        if(!empty($this->nationalIDNumber))
+            $data['nationalIDNumber'] = $this->nationalIDNumber;
+        if(!empty($this->suspiciousAccountActivity))
+            $data['suspiciousAccountActivity'] = $this->suspiciousAccountActivity;
+        if(!empty($this->authenticationMethod))
+            $data['authenticationMethod'] = $this->authenticationMethod;
+        if(!empty($this->authenticationTimestamp))
+            $data['authenticationTimestamp'] = $this->authenticationTimestamp;
+        if(!empty($this->priorAuthenticationMethod))
+            $data['priorAuthenticationMethod'] = $this->priorAuthenticationMethod;
+        if(!empty($this->priorAuthenticationTimestamp))
+            $data['priorAuthenticationTimestamp'] = $this->priorAuthenticationTimestamp->format(self::AUTHENTICATION_TIMESTAMP_FORMAT);
+        if(!empty($this->paymentMeanAge))
+            $data['paymentMeanAge'] = $this->paymentMeanAge->format(self::PAYMENT_MEAN_AGE_FORMAT);
+        if(!empty($this->lastYearTransactions))
+            $data['lastYearTransactions'] = $this->lastYearTransactions;
+        if(!empty($this->last24HoursTransactions))
+            $data['last24HoursTransactions'] = $this->last24HoursTransactions;
+        if(!empty($this->addCardNbLast24Hours))
+            $data['addCardNbLast24Hours'] = $this->addCardNbLast24Hours;
+        if(!empty($this->last6MonthsPurchase))
+            $data['last6MonthsPurchase'] = $this->last6MonthsPurchase;
+        if(!empty($this->lastPasswordChange))
+            $data['lastPasswordChange'] = $this->lastPasswordChange->format(self::LAST_PASSWORD_CHANGE_FORMAT);
+        if(!empty($this->accountAge))
+            $data['accountAge'] = $this->accountAge->format(self::ACCOUNT_AGE_FORMAT);
+        if(!empty($this->lastAccountModification))
+            $data['lastAccountModificatio'] = $this->lastAccountModification->format(self::LAST_ACCOUNT_MODIFICATION_FORMAT);
+
+        if(!$skipValidation)
+            $this->validate($data);
+
+        return $data;
     }
 }

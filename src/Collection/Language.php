@@ -2,55 +2,26 @@
 
 namespace OwlyMonetico\Collection;
 
-use Exception;
-use ReflectionClass;
 
 abstract class Language
 {
     use _Tools;
 
-    /**
-     * German
-     */
-    const DE='DE';
+    const DE = 'DE';
 
-    /**
-     * English
-     */
-    const EN='EN';
+    const EN = 'EN';
 
-    /**
-     * Spanish
-     */
-    const ES='ES';
+    const ES = 'ES';
 
-    /**
-     * French
-     */
-    const FR='FR';
+    const FR = 'FR';
 
-    /**
-     * Italian
-     */
-    const IT='IT';
+    const IT = 'IT';
 
-    /**
-     * Japan
-     */
-    const JA='JA';
+    const JA = 'JA';
 
-    /**
-     * Dutch
-     */
-    const NL='NL';
+    const NL = 'NL';
 
-    /**
-     * Portuguese
-     */
-    const PT='PT';
+    const PT = 'PT';
 
-    /**
-     * Swedish
-     */
-    const SV='SV';
+    const SV = 'SV';
 }

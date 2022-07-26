@@ -2,11 +2,17 @@
 
 namespace OwlyMonetico\Model;
 
+use DateTime;
+
 class Order
 {
     private string $reference;
 
-    private ?string $description;
+    private string $amount;
+
+    private ?string $description = null;
+
+    private DateTime $date;
 
     private BillingAddress $billingAddress;
 
@@ -16,13 +22,15 @@ class Order
 
     private ShippingAddress $shippingAddress;
 
-    public function __construct(string $reference, Customer $customer, Cart $cart, BillingAddress $billingAddress, ShippingAddress $shippingAddress)
+    public function __construct(string $reference, string $amount, Customer $customer, Cart $cart, BillingAddress $billingAddress, ShippingAddress $shippingAddress)
     {
         $this->reference = $reference;
+        $this->amount = $amount;
         $this->customer = $customer;
         $this->cart = $cart;
         $this->billingAddress = $billingAddress;
         $this->shippingAddress = $shippingAddress;
+        $this->date = new DateTime();
     }
 
     public function getReference(): string
@@ -36,6 +44,17 @@ class Order
         return $this;
     }
 
+    public function getAmount(): string
+    {
+        return $this->amount;
+    }
+
+    public function setAmount(string $amount): Order
+    {
+        $this->amount = $amount;
+        return $this;
+    }
+
     public function getDescription(): ?string
     {
         return $this->description;
@@ -44,6 +63,17 @@ class Order
     public function setDescription(?string $description): Order
     {
         $this->description = $description;
+        return $this;
+    }
+
+    public function getDate(): DateTime
+    {
+        return $this->date;
+    }
+
+    public function setDate(DateTime $date): Order
+    {
+        $this->date = $date;
         return $this;
     }
 
@@ -89,6 +119,4 @@ class Order
         $this->shippingAddress = $shippingAddress;
         return $this;
     }
-
-
 }

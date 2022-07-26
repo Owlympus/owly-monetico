@@ -4,7 +4,7 @@ namespace OwlyMonetico\Request;
 
 use OwlyMonetico\Monetico;
 
-class PreAuthorizedPayment extends PaymentRequest
+class PreAuthorizedSimplePayment extends SimplePaymentRequest
 {
     /**
      * Pre-authorization dossier number
@@ -33,7 +33,7 @@ class PreAuthorizedPayment extends PaymentRequest
         return $this->numeroDossier;
     }
 
-    public function setNumeroDossier(?string $numeroDossier): PreAuthorizedPayment
+    public function setNumeroDossier(?string $numeroDossier): PreAuthorizedSimplePayment
     {
         $this->numeroDossier = $numeroDossier;
 

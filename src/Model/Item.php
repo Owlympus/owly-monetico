@@ -2,41 +2,28 @@
 
 namespace OwlyMonetico\Model;
 
-use JsonSerializable;
 
-class Item implements JsonSerializable
+use Exception;
+use OwlyMonetico\Collection\ProductCode;
+use OwlyMonetico\Collection\ProductRisk;
+
+class Item
 {
-    private ?string $name;
+    private ?string $name = null;
 
-    private ?string $description;
+    private ?string $description = null;
 
-    private ?string $productCode;
+    private ?string $productCode = null;
 
-    private ?string $imageURL;
+    private ?string $imageURL = null;
 
-    private ?int $unitPrice;
+    private ?int $unitPrice = null;
 
-    private ?int $quantity;
+    private ?int $quantity = null;
 
-    private ?string $productSKU;
+    private ?string $productSKU = null;
 
-    private ?string $productRisk;
-
-    public function jsonSerialize()
-    {
-        return array_filter([
-            'name' => $this->getName(),
-            'description' => $this->getDescription(),
-            'productCode' => $this->getProductCode(),
-            'imageURL' => $this->getImageURL(),
-            'unitPrice' => $this->getUnitPrice(),
-            'quantity' => $this->getQuantity(),
-            'productSKU' => $this->getProductSKU(),
-            'productRisk' => $this->getProductRisk()
-        ], function ($value) {
-            return !is_null($value);
-        });
-    }
+    private ?string $productRisk = null;
 
     public function getName(): ?string
     {
@@ -132,5 +119,57 @@ class Item implements JsonSerializable
         $this->productRisk = $productRisk;
 
         return $this;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function validate($data)
+    {
+        if (!empty($data['name']) && strlen($data['name']) > 45)
+            throw new Exception('Field "Item->name" incorrect (' . $data['name'] . '). Need 45 characters max.');
+        if (!empty($data['description']) && strlen($data['description']) > 2048)
+            throw new Exception('Field "Item->description" incorrect (' . $data['description'] . '). Need 2048 characters max.');
+        if(!empty($data['productCode']) && !in_array($data['productCode'], ProductCode::all()))
+            throw new Exception('Field "Item->productCode" incorrect (' . $data['productCode'] . '). Need to be an available product code in this list: ['.implode(', ', ProductCode::all()).'].');
+        if(!empty($data['imageURL']) && !filter_var($data['imageURL'], FILTER_VALIDATE_URL))
+            throw new Exception('Field "Item->imageURL" incorrect (' . $data['imageURL'] . '). Need to be valid link.');
+        if(!empty($data['unitPrice']) && strlen($data['unitPrice']) > 12)
+            throw new Exception('Field "Item->unitPrice" incorrect (' . $data['unitPrice'] . '). Need 12 numbers max.');
+        if(!empty($data['productSKU']) && strlen($data['productSKU']) > 255)
+            throw new Exception('Field "Item->productSKU" incorrect (' . $data['productSKU'] . '). Need 255 characters max.');
+        if(!empty($data['productRisk']) && !in_array($data['productRisk'], ProductRisk::all()))
+            throw new Exception('Field "Item->productRisk" incorrect (' . $data['productRisk'] . '). Need to be an available product risk in this list: ['.implode(', ', ProductRisk::all()).'].');
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function generateContext($skipValidation = false): array
+    {
+        $data = [];
+
+        // Optional
+        if(!empty($this->name))
+            $data['name'] = $this->name;
+        if(!empty($this->description))
+            $data['description'] = $this->description;
+        if(!empty($this->productCode))
+            $data['productCode'] = $this->productCode;
+        if(!empty($this->imageURL))
+            $data['imageURL'] = $this->imageURL;
+        if(isset($this->unitPrice))
+            $data['unitPrice'] = $this->unitPrice;
+        if(isset($this->quantity))
+            $data['quantity'] = $this->quantity;
+        if(!empty($this->productSKU))
+            $data['productSKU'] = $this->productSKU;
+        if(!empty($this->productRisk))
+            $data['productRisk'] = $this->productRisk;
+
+        if(!$skipValidation)
+            $this->validate($data);
+
+        return $data;
     }
 }

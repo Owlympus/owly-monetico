@@ -2,6 +2,7 @@
     "name": "owlympus/owly-monetico",
     "description": "Monetico Gateway",
     "license": "proprietary",
+    "version": "1.0.0",
     "keywords": [
         "monetico"
     ],
