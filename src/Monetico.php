@@ -3,11 +3,14 @@
 namespace OwlyMonetico;
 
 use Exception;
+use OwlyMonetico\Collection\Civility;
 use OwlyMonetico\Collection\Language;
 use OwlyMonetico\Collection\PaymentProtocol;
 use OwlyMonetico\Collection\ThreeDSecureChallenge;
 use OwlyMonetico\Interfaces\PaymentRequestInterface;
+use OwlyMonetico\Request\CofidisPaymentRequest;
 use OwlyMonetico\Request\IFramePaymentRequest;
+use OwlyMonetico\Request\PreAuthorizedPaymentRequest;
 use OwlyMonetico\Request\SimplePaymentRequest;
 use OwlyMonetico\Request\SplitPaymentRequest;
 
@@ -259,25 +262,127 @@ class Monetico
         if (!$skipValidation) {
             $this->validatePaymentRequestFields($fields);
 
-            if($fields['nbrech'] < 2 || $fields['nbrech'] > 4)
+            if ($fields['nbrech'] < 2 || $fields['nbrech'] > 4)
                 throw new Exception('Field "SplitPaymentRequest->paymentDeadline" incorrect (' . $fields['nbrech'] . '). 2, 3 or 4 accepted.');
 
             $total = 0;
             for ($i = 1; $i <= $fields['nbrech']; $i++) {
                 $total += $paymentRequest->{"getDueAmount$i"}();
 
-                if(preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $fields["dateech$i"]) === false)
+                if (preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $fields["dateech$i"]) === false)
                     throw new Exception("Field \"SplitPaymentRequest->dueDate$i\" incorrect ( " . $fields["dateech$i"] . ' ). Format DD/MM/YYYY required.');
-                if(preg_match('/^\d+(\.\d{1,2})?[A-Z]{3}$/', $fields["montantech$i"]) === false)
+                if (preg_match('/^\d+(\.\d{1,2})?[A-Z]{3}$/', $fields["montantech$i"]) === false)
                     throw new Exception("Field \"SplitPaymentRequest->dueAmount1$i\" incorrect ( " . $fields["montantech$i"] . ' ). Need format numbers + devise or numbers + decimal + devise (ex: 35EUR or 45.75USD).');
             }
 
-            if(sprintf('%01.2f%s', $total, $paymentRequest->getCurrency()) !== $fields['montant'])
+            if (sprintf('%01.2f%s', $total, $paymentRequest->getCurrency()) !== $fields['montant'])
                 throw new Exception('Fields "SplitPaymentRequest->dueAmounts" incorrects (calculated: ' . sprintf('%01.2f%s', $total, $paymentRequest->getCurrency()) . '. total: ' . $fields['montant'] . '). Due amounts need to be equal to total amount.');
 
             // Optional
             if (!empty($fields['mail']) && filter_var($fields['mail'], FILTER_VALIDATE_EMAIL) === false)
                 throw new Exception('Field "mail" incorrect (' . $fields['mail'] . '). Valid email required.');
+        }
+
+        return $fields;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getPreAuthorizedPaymentRequestFields(PreAuthorizedPaymentRequest $paymentRequest, $skipValidation = false): array
+    {
+        $fields = $this->getPaymentRequestFields($paymentRequest, $skipValidation);
+        $fields['numero_dossier'] = $paymentRequest->getFileNumber();
+
+        $fields['MAC'] = $this->calculateMAC($fields);
+
+        if (!$skipValidation) {
+            $this->validatePaymentRequestFields($fields);
+
+            if (empty($fields['numero_dossier']) || strlen($fields['numero_dossier']) > 12)
+                throw new Exception('Field "PreAuthorizedPaymentRequest->fileNumber" incorrect (' . $fields['numero_dossier'] . '). Need 12 alphanumeric characters max.');
+        }
+
+        return $fields;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getCofidisPaymentRequestFields(CofidisPaymentRequest $paymentRequest, $skipValidation = false): array
+    {
+        $fields = $this->getPaymentRequestFields($paymentRequest, $skipValidation);
+
+        if(!empty($paymentRequest->getCivility()))
+            $fields['civiliteclient'] = $paymentRequest->getCivility();
+        if(!empty($paymentRequest->getLastName()))
+            $fields['nomclient'] = $paymentRequest->getLastName();
+        if(!empty($paymentRequest->getFirstName()))
+            $fields['prenomclient'] = $paymentRequest->getFirstName();
+        if(!empty($paymentRequest->getAddress()))
+            $fields['adresseclient'] = $paymentRequest->getAddress();
+        if(!empty($paymentRequest->getAdditionalAddress()))
+            $fields['complementadresseclient'] = $paymentRequest->getAdditionalAddress();
+        if(!empty($paymentRequest->getPostalCode()))
+            $fields['codepostalclient'] = $paymentRequest->getPostalCode();
+        if(!empty($paymentRequest->getCity()))
+            $fields['villeclient'] = $paymentRequest->getCity();
+        if(!empty($paymentRequest->getCountry()))
+            $fields['paysclient'] = $paymentRequest->getCountry();
+        if(!empty($paymentRequest->getPhone()))
+            $fields['telephonefixeclient'] = $paymentRequest->getPhone();
+        if(!empty($paymentRequest->getMobilePhone()))
+            $fields['telephonemobileclient'] = $paymentRequest->getMobilePhone();
+        if(!empty($paymentRequest->getBirthCountrySubdivision()))
+            $fields['departementnaissanceclient'] = $paymentRequest->getBirthCountrySubdivision();
+        if(!empty($paymentRequest->getBirthdate()))
+            $fields['datenaissanceclient'] = $paymentRequest->getBirthdate();
+        if(!empty($paymentRequest->getPreScore()))
+            $fields['prescore'] = $paymentRequest->getPreScore();
+
+        $fields['MAC'] = $this->calculateMAC($fields);
+
+        if (!$skipValidation) {
+            $this->validatePaymentRequestFields($fields);
+
+            if (!empty($fields['civiliteclient']) && !in_array($fields['civiliteclient'], Civility::all()))
+                throw new Exception('Field "CofidisPaymentRequest->civility" incorrect (' . $fields['civiliteclient'] . '). Need to be an available civility in this list: ' . implode(', ', Civility::all()));
+
+            if (!empty($fields['nomclient']) && preg_match('/^[a-zA-Záàâäãåçéèêëíìîïñóòôöõúùûüýÿ-]{1,50}$/', $fields['nomclient']) === false)
+                throw new Exception('Field "CofidisPaymentRequest->lastName" incorrect (' . $fields['nomclient'] . '). Need 50 characters max. Pattern: /^[a-zA-Záàâäãåçéèêëíìîïñóòôöõúùûüýÿ-]{1,50}/');
+
+            if (!empty($fields['prenomclient']) && preg_match('/^[a-zA-Záàâäãåçéèêëíìîïñóòôöõúùûüýÿ-]{1,50}$/', $fields['prenomclient']) === false)
+                throw new Exception('Field "CofidisPaymentRequest->firstName" incorrect (' . $fields['prenomclient'] . '). Need 50 characters max. Pattern: /^[a-zA-Záàâäãåçéèêëíìîïñóòôöõúùûüýÿ-]{1,50}/');
+
+            if (!empty($fields['adresseclient']) && strlen($fields['adresseclient']) > 100)
+                throw new Exception('Field "CofidisPaymentRequest->address" incorrect (' . $fields['adresseclient'] . '). Need 100 characters max.');
+
+            if (!empty($fields['complementadresseclient']) && strlen($fields['complementadresseclient']) > 50)
+                throw new Exception('Field "CofidisPaymentRequest->additionalAddress" incorrect (' . $fields['complementadresseclient'] . '). Need 50 characters max.');
+
+            if (!empty($fields['codepostalclient']) && preg_match('/^[a-zA-Z\d]{1,10}$/', $fields['codepostalclient']) === false)
+                throw new Exception('Field "CofidisPaymentRequest->postalCode" incorrect (' . $fields['codepostalclient'] . '). Need 10 alphanumeric characters max. Pattern: /^[a-zA-Z\d]{1,10}$/');
+
+            if (!empty($fields['villeclient']) && preg_match('/^[a-zA-Z]{1,50}$/', $fields['villeclient']) === false)
+                throw new Exception('Field "CofidisPaymentRequest->city" incorrect (' . $fields['villeclient'] . '). Need 50 characters max. Pattern: /^[a-zA-Z]{1,50}$/');
+
+            if (!empty($fields['paysclient']) && !in_array($fields['paysclient'], Language::all()))
+                throw new Exception('Field "CofidisPaymentRequest->country" incorrect (' . $fields['paysclient'] . '). Need to be an available country in this list: ' . implode(', ', Language::all()));
+
+            if (!empty($fields['telephonefixeclient']) && preg_match('/^\d{2,20}$/', $fields['telephonefixeclient']) === false)
+                throw new Exception('Field "CofidisPaymentRequest->phone" incorrect (' . $fields['telephonefixeclient'] . '). Need numeric characters. Pattern: /^\d{2,20}$/');
+
+            if (!empty($fields['telephonemobileclient']) && preg_match('/^\d{2,20}$/', $fields['telephonemobileclient']) === false)
+                throw new Exception('Field "CofidisPaymentRequest->mobilePhone" incorrect (' . $fields['telephonemobileclient'] . '). Need numeric characters. Pattern: /^\d{2,20}$/');
+
+            if (!empty($fields['departementnaissanceclient']) && strlen($fields['departementnaissanceclient']) > 50)
+                throw new Exception('Field "CofidisPaymentRequest->birthCountrySubdivision" incorrect (' . $fields['departementnaissanceclient'] . '). Need 50 characters max. Pattern: /^[a-zA-Z]{1,50}$/');
+
+            if (!empty($fields['datenaissanceclient']) && preg_match('/^\d{8}$/', $fields['datenaissanceclient']) === false)
+                throw new Exception('Field "CofidisPaymentRequest->birthdate" incorrect (' . $fields['datenaissanceclient'] . '). Need 8 numeric characters max. Pattern: /^\d{8}$/');
+
+            if (!empty($fields['prescore']) && preg_match('/^\d+$/', $fields['prescore']) === false)
+                throw new Exception('Field "CofidisPaymentRequest->preScore" incorrect (' . $fields['prescore'] . '). Need numeric characters. Pattern: /^\d+$/');
         }
 
         return $fields;
