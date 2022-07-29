@@ -2,7 +2,7 @@
     "name": "owlympus/owly-monetico",
     "description": "Monetico Gateway",
     "license": "proprietary",
-    "version": "1.0.0",
+    "version": "0.8.0",
     "keywords": [
         "monetico"
     ],
@@ -19,6 +19,6 @@
         }
     ],
     "require": {
-        "php": "7.4"
+        "php": ">=7.4"
     }
 }
