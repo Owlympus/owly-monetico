@@ -314,7 +314,7 @@ class ShippingAddress
             throw new Exception('Field "ShippingAddress->firstName" incorrect (' . $data['firstName'] . '). Need 45 characters max.');
         if (!empty($data['lastName']) && strlen($data['lastName']) > 45)
             throw new Exception('Field "ShippingAddress->lastName" incorrect (' . $data['lastName'] . '). Need 45 characters max.');
-        if (!empty($data['lastName']) && strlen($data['middleName']) > 150)
+        if (!empty($data['middleName']) && strlen($data['middleName']) > 150)
             throw new Exception('Field "ShippingAddress->middleName" incorrect (' . $data['middleName'] . '). Need 150 characters max.');
         if (!empty($data['address']) && strlen($data['address']) > 250)
             throw new Exception('Field "ShippingAddress->address" incorrect (' . $data['address'] . '). Need 250 characters max.');

@@ -287,7 +287,7 @@ class BillingAddress
             throw new Exception('Field "BillingAddress->firstName" incorrect (' . $data['firstName'] . '). Need 45 characters max.');
         if (!empty($data['lastName']) && strlen($data['lastName']) > 45)
             throw new Exception('Field "BillingAddress->lastName" incorrect (' . $data['lastName'] . '). Need 45 characters max.');
-        if (!empty($data['lastName']) && strlen($data['middleName']) > 150)
+        if (!empty($data['middleName']) && strlen($data['middleName']) > 150)
             throw new Exception('Field "BillingAddress->middleName" incorrect (' . $data['middleName'] . '). Need 150 characters max.');
         if (!empty($data['address']) && strlen($data['address']) > 250)
             throw new Exception('Field "BillingAddress->address" incorrect (' . $data['address'] . '). Need 250 characters max.');

@@ -30,9 +30,6 @@ class Monetico
 
     private string $mode = 'dev';
 
-    /**
-     * @throws Exception
-     */
     public function __construct(string $eptCode, string $securityKey, string $companyCode)
     {
         $this->eptCode = $eptCode;
@@ -314,31 +311,31 @@ class Monetico
         $fields = $this->getPaymentRequestFields($paymentRequest, $skipValidation);
 
         if(!empty($paymentRequest->getCivility()))
-            $fields['civiliteclient'] = $paymentRequest->getCivility();
+            $fields['civiliteclient'] = bin2hex($paymentRequest->getCivility());
         if(!empty($paymentRequest->getLastName()))
-            $fields['nomclient'] = $paymentRequest->getLastName();
+            $fields['nomclient'] = bin2hex($paymentRequest->getLastName());
         if(!empty($paymentRequest->getFirstName()))
-            $fields['prenomclient'] = $paymentRequest->getFirstName();
+            $fields['prenomclient'] = bin2hex($paymentRequest->getFirstName());
         if(!empty($paymentRequest->getAddress()))
-            $fields['adresseclient'] = $paymentRequest->getAddress();
+            $fields['adresseclient'] = bin2hex($paymentRequest->getAddress());
         if(!empty($paymentRequest->getAdditionalAddress()))
-            $fields['complementadresseclient'] = $paymentRequest->getAdditionalAddress();
+            $fields['complementadresseclient'] = bin2hex($paymentRequest->getAdditionalAddress());
         if(!empty($paymentRequest->getPostalCode()))
-            $fields['codepostalclient'] = $paymentRequest->getPostalCode();
+            $fields['codepostalclient'] = bin2hex($paymentRequest->getPostalCode());
         if(!empty($paymentRequest->getCity()))
-            $fields['villeclient'] = $paymentRequest->getCity();
+            $fields['villeclient'] = bin2hex($paymentRequest->getCity());
         if(!empty($paymentRequest->getCountry()))
-            $fields['paysclient'] = $paymentRequest->getCountry();
+            $fields['paysclient'] = bin2hex($paymentRequest->getCountry());
         if(!empty($paymentRequest->getPhone()))
-            $fields['telephonefixeclient'] = $paymentRequest->getPhone();
+            $fields['telephonefixeclient'] = bin2hex($paymentRequest->getPhone());
         if(!empty($paymentRequest->getMobilePhone()))
-            $fields['telephonemobileclient'] = $paymentRequest->getMobilePhone();
+            $fields['telephonemobileclient'] = bin2hex($paymentRequest->getMobilePhone());
         if(!empty($paymentRequest->getBirthCountrySubdivision()))
-            $fields['departementnaissanceclient'] = $paymentRequest->getBirthCountrySubdivision();
+            $fields['departementnaissanceclient'] = bin2hex($paymentRequest->getBirthCountrySubdivision());
         if(!empty($paymentRequest->getBirthdate()))
-            $fields['datenaissanceclient'] = $paymentRequest->getBirthdate();
+            $fields['datenaissanceclient'] = bin2hex($paymentRequest->getBirthdate()->format('Ymd'));
         if(!empty($paymentRequest->getPreScore()))
-            $fields['prescore'] = $paymentRequest->getPreScore();
+            $fields['prescore'] = bin2hex($paymentRequest->getPreScore());
 
         $fields['MAC'] = $this->calculateMAC($fields);
 
