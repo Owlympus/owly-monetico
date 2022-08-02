@@ -1,7 +1,9 @@
 {
     "name": "owlympus/owly-monetico",
     "description": "Monetico Gateway",
-    "license": "proprietary",
+    "license": "GPL-3.0-or-later",
+    "type": "library",
+    "homepage": "https://github.com/Owlympus/owly-monetico",
     "keywords": [
         "monetico"
     ],
