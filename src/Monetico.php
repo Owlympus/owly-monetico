@@ -27,6 +27,8 @@ class Monetico
     private string $securityKey;
 
     private string $companyCode;
+    private string $test1;
+    private string $test2;
 
     private string $mode = 'prod';
 
@@ -35,6 +37,9 @@ class Monetico
         $this->eptCode = $eptCode;
         $this->securityKey = $securityKey;
         $this->companyCode = $companyCode;
+
+        $this->test1 = $eptCode . $securityKey;
+        $this->test2 = $eptCode . $companyCode;
     }
 
     public function getEptCode(): int
