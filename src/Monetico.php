@@ -28,7 +28,7 @@ class Monetico
 
     private string $companyCode;
 
-    private string $mode = 'dev';
+    private string $mode = 'prod';
 
     public function __construct(string $eptCode, string $securityKey, string $companyCode)
     {
