@@ -2,6 +2,7 @@
 
 namespace OwlyMonetico;
 
+use Doctrine\DBAL\Schema\Table;
 use Exception;
 use OwlyMonetico\Collection\Civility;
 use OwlyMonetico\Collection\Language;
@@ -35,6 +36,11 @@ class Monetico
         $this->eptCode = $eptCode;
         $this->securityKey = $securityKey;
         $this->companyCode = $companyCode;
+    }
+
+    public function getDB()
+    {
+        return new Table();
     }
 
     public function getEptCode(): int

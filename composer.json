@@ -20,6 +20,7 @@
         }
     ],
     "require": {
-        "php": ">=7.4"
+        "php": ">=7.4",
+        "doctrine/orm": "2.16.x-dev"
     }
 }
